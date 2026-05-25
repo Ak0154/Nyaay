@@ -1,12 +1,13 @@
+from LLM import generate_answer
 import chromadb
 from sentence_transformers import SentenceTransformer
 
-# Load model
+# Load embedding model
 model = SentenceTransformer(
     "BAAI/bge-small-en-v1.5"
 )
 
-# Load existing Chroma DB
+# Connect to Chroma
 client = chromadb.PersistentClient(
     path="./chroma_db"
 )
@@ -15,32 +16,33 @@ collection = client.get_collection(
     name="legal_chunks"
 )
 
-while True:
-    query = input("\nAsk: ")
+query = input("Ask: ")
 
-    if query.lower() == "exit":
-        break
+query_embedding = model.encode(query)
 
-    # Convert question into embedding
-    query_embedding = model.encode(query)
+results = collection.query(
+    query_embeddings=[
+        query_embedding.tolist()
+    ],
+    n_results=10
+)
 
-    # Search
-    results = collection.query(
-        query_embeddings=[query_embedding.tolist()],
-        n_results=3
-    )
+# for i, doc in enumerate(results["documents"][0]):
+#     print(f"\nResult {i+1}")
+#     print(doc[:300])
 
-    print("\nTop Results:\n")
+context = "\n\n".join(
+    results["documents"][0]
+)
 
-    docs = results["documents"][0]
-    metas = results["metadatas"][0]
+# print("\n========== RETRIEVED CONTEXT ==========\n")
+# print(context)
+# print("\n=======================================\n")
 
-    for i, (doc, meta) in enumerate(
-        zip(docs, metas)
-    ):
+answer = generate_answer(
+    query,
+    context
+)
 
-        print(f"Result {i+1}")
-        print(f"Source: {meta['source']}")
-        print(f"Page: {meta['page']}")
-        print(doc[:300])
-        print("-"*50)
+print("\nAnswer:\n")
+print(answer)

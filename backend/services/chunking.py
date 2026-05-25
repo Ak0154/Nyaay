@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DOCS_FOLDER = BASE_DIR / "output"
 OUTPUT_FILE = BASE_DIR/"chunks" / "chunks.json"
 CHUNK_SIZE    = 500
-CHUNK_OVERLAP = 50
+CHUNK_OVERLAP = 200
 
 
 # ── LOAD ALL DOCUMENTS ────────────────────────────────────────────────────────
