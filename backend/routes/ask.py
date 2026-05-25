@@ -8,7 +8,6 @@ router = APIRouter()
 
 
 class QueryRequest(BaseModel):
-
     query: str
     document_id: str
 
@@ -26,10 +25,32 @@ async def ask(data: QueryRequest):
         context
     )
 
+    citations = []
+
+    for source in sources:
+
+        citations.append({
+
+            "text":
+            source.get(
+                "source",
+                "Unknown source"
+            ),
+
+            "page":
+            int(
+                source.get(
+                    "page",
+                    0
+                )
+            )
+
+        })
+
     return {
 
         "success": True,
         "answer": answer,
-        "sources": sources
+        "citations": citations
 
     }
