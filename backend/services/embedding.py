@@ -61,7 +61,7 @@ def store_in_chroma(
 ):
 
     texts = [
-        chunk["text"]
+        chunk.page_content
         for chunk in chunks
     ]
 
@@ -77,11 +77,25 @@ def store_in_chroma(
     metadatas = [
 
         {
-            "document_id": document_id,
-            "source": chunk["source"],
-            "page": str(chunk["page"]),
-            "chunk_type":
-            chunk["chunk_type"]
+    "document_id": document_id,
+
+    "source":
+    Path(
+        chunk.metadata.get(
+            "source",
+            "unknown"
+        )
+    ).name,
+
+    "page":
+    str(
+        chunk.metadata.get(
+            "page",
+            0
+        )
+    ),
+
+    "chunk_type":"text"
         }
 
         for chunk in chunks

@@ -3,9 +3,12 @@ from pathlib import Path
 import shutil
 import uuid
 
-from services.pdf_loader import extract_pdf_text
+from services.text import extract_pdf_text
 from services.chunking import chunk_documents
 from services.embedding import store_in_chroma
+from services.text import extract_pdf_text
+
+
 
 router = APIRouter()
 
@@ -32,6 +35,10 @@ async def upload_pdf(file: UploadFile = File(...)):
     docs = extract_pdf_text(
         str(file_path)
     )
+
+    text = extract_pdf_text(
+    file_path
+    )   
 
     # Chunk
     chunks = chunk_documents(
